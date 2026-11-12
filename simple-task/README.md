@@ -14,7 +14,7 @@ Vendored copy of `@bachi/pi-coder` 的 `extensions/simple-task`（base：pi-code
 
 `~/.pi/agent/settings.json`：
 - `npm:@bachi/pi-coder` 条目排除 `"!extensions/simple-task/**"`（防双份注册 task_* 工具）
-- 本副本位于 pi-extensions monorepo（`~/Dev/pi-agent/extensions/simple-task/`），
+- 本副本位于 pi-extensions monorepo（`~/Dev/pi-agent/simple-task/`），
   经 `~/.pi/agent/extensions/simple-task` symlink 自动发现加载
 
 repo 根的 `node_modules` symlink 指向当前 pi release，供测试解析 peer deps
@@ -23,5 +23,5 @@ repo 根的 `node_modules` symlink 指向当前 pi release，供测试解析 pee
 ## 上游同步（re-vendor，可选）
 
 pi-coder 更新后若上游 simple-task 有变化：把新版的 5 个源文件 + 4 个测试文件复制进
-`extensions/simple-task/`，再保留本 README 列的三处个人改动（改动全部集中在
+`simple-task/`，再保留本 README 列的三处个人改动（改动全部集中在
 `widget.ts` 的 `buildWidgetLines` + `GLYPHS`，其余文件应与上游零差异）。

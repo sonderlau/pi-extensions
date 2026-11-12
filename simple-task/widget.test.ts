@@ -2,7 +2,7 @@
  * Tests for simple-task 的 widget 视口渲染 — 端到端：pi 自己的扩展加载器真加载本扩展，
  * 驱动一次 task_set 拿到扩展注册的 widget 工厂，再渲染真实行做断言。
  *
- * Run with:  PI_TEST_PI_ENTRY=<pi 库入口> node --test extensions/simple-task/widget.test.ts
+ * Run with:  PI_TEST_PI_ENTRY=<pi 库入口> node --test simple-task/widget.test.ts
  *
  * 为什么绕这一圈：视口的全部价值在「用户屏幕上滚不滚」，而屏幕上那几行是
  * 扩展自己注册的工厂 → `buildWidgetLines` 拼出来的。只看 `computeViewport` 的纯代数

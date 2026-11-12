@@ -14,7 +14,7 @@ vendored copy instead.
 
 ## What's frozen vs auto-updating
 
-- **Frozen**: only this `extensions/plan-mode/` directory (plus the tiny
+- **Frozen**: only this `plan-mode/` directory (plus the tiny
   `sandbox-mode.ts`, which is a `globalThis` singleton and stays compatible
   with upstream's copy).
 - **Auto-updating**: pi itself and every other pi-coder extension — settings
@@ -33,7 +33,7 @@ vendored copy instead.
      execute + `formatApprovalNotes(notes)`).
    - `plan-text.ts`: `buildRevisionMessage` + `formatApprovalNotes`.
    - Keep `review-ui.ts` (ours), `review-lines.ts(.test.ts)`, `sandbox-mode.ts`.
-3. `node --test extensions/plan-mode/` (uses the `node_modules` symlink to the
+3. `node --test plan-mode/` (uses the `node_modules` symlink to the
   active pi release).
 4. Restart pi.
 
@@ -73,7 +73,7 @@ symlink 自动发现加载，避免 `@bachi/pi-coder` 更新时覆盖审阅界�
 
 ```sh
 PI_TEST_PI_ENTRY=~/.pi/agent/install/releases/$(cat ~/.pi/agent/install/current-version)/node_modules/@earendil-works/pi-coding-agent/dist/bundle/index.js \
-  node --test extensions/plan-mode/
+  node --test plan-mode/
 ```
 
 The repo-root `node_modules` symlink points at the active pi release

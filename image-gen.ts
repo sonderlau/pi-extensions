@@ -1,6 +1,8 @@
 /**
- * CodeAPI (codeapi.icu) image generation: gpt-image-2 / 2.5-sunburst / 2.5-flare.
- * OpenAI Images protocol, same key as the codeapi chat provider.
+ * Image generation for pi: registers image models the agent can pick like any
+ * chat model. Currently backed by CodeAPI (codeapi.icu, OpenAI Images
+ * protocol, same key as the codeapi chat provider); other backends can be
+ * added as additional providers/models later.
  * Text-only input → POST /images/generations (JSON); input images → POST /images/edits (multipart).
  */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -79,15 +81,15 @@ async function generateImages(model: any, context: any, options: any = {}) {
 
 const IMAGE_MODEL = { type: "image", api: API, input: ["text", "image"], output: ["image"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 } };
 
-export default function codeapiImages(pi: ExtensionAPI) {
-	pi.registerProvider("codeapi-images", {
-		name: "CodeAPI Images",
+export default function imageGen(pi: ExtensionAPI) {
+	pi.registerProvider("image-gen", {
+		name: "Image Generation",
 		baseUrl: BASE_URL,
 		apiKey: "!cat /Users/sonderlau/.pi/agent/secrets/codeapi-key",
 		models: [
-			{ ...IMAGE_MODEL, id: "gpt-image-2", name: "GPT Image 2 (CodeAPI)" },
-			{ ...IMAGE_MODEL, id: "gpt-image-2.5-sunburst", name: "GPT Image 2.5 Sunburst (CodeAPI)" },
-			{ ...IMAGE_MODEL, id: "gpt-image-2.5-flare", name: "GPT Image 2.5 Flare (CodeAPI)" },
+			{ ...IMAGE_MODEL, id: "gpt-image-2", name: "GPT Image 2" },
+			{ ...IMAGE_MODEL, id: "gpt-image-2.5-sunburst", name: "GPT Image 2.5 Sunburst" },
+			{ ...IMAGE_MODEL, id: "gpt-image-2.5-flare", name: "GPT Image 2.5 Flare" },
 		],
 		images: { [API]: { generateImages } },
 	} as any);
