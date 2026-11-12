@@ -76,6 +76,38 @@ it("clicks into the resident editor and submits Chinese document comments", asyn
 	assert.deepEqual(h.result(), { kind: "revise", comments: ["Document: 中文意见"] });
 });
 
+function firstBodyNumber(lines: string[]): number {
+	const match = (lines[2] ?? "").match(/(\d+)/);
+	return match ? Number(match[1]) : -1;
+}
+
+it("u/d half-page and PageDown ease; a second press snaps; w is doc only", async () => {
+	const plan = Array.from({ length: 40 }, (_, i) => `line ${i + 1}`).join("\n");
+	const h = await reviewHarness(plan, 80, 24);
+	const start = firstBodyNumber(h.render());
+	h.key("d");
+	const stepped = firstBodyNumber(h.render());
+	assert.ok(stepped > start && stepped - start < 6, `half page should ease, moved ${stepped - start}`);
+	h.key("d");
+	const snapped = firstBodyNumber(h.render());
+	assert.ok(snapped - stepped >= 6, `second d should snap, moved ${snapped - stepped}`);
+	await new Promise((resolve) => setTimeout(resolve, 90));
+	h.key("u");
+	const up = firstBodyNumber(h.render());
+	assert.ok(up < snapped && snapped - up < 6, `u should ease up, moved ${snapped - up}`);
+	h.key("u");
+	const page = await reviewHarness(plan, 80, 24);
+	const pageStart = firstBodyNumber(page.render());
+	page.key("\x1b[6~");
+	const pageStepped = firstBodyNumber(page.render());
+	assert.ok(pageStepped > pageStart && pageStepped - pageStart < 6);
+	page.key("\x1b[6~");
+	h.key("w");
+	assert.equal(h.result(), undefined);
+	h.key("w");
+	assert.deepEqual(h.result(), { kind: "doc-only", notes: [] });
+});
+
 it("body clicks browse, and a draft keeps its original line while browsing", async () => {
 	const h = await reviewHarness();
 	h.render();
@@ -125,6 +157,7 @@ describe("resident comment editor", () => {
 	});
 
 	it("keeps browsing actions separate from editing actions", () => {
+		assert.equal(reviewActions(false, false).find((action) => action.id === "doc")?.key, "w");
 		assert.deepEqual(reviewActions(false, false).map((action) => action.id), ["comment", "send", "approve", "doc", "reject"]);
 		assert.deepEqual(reviewActions(true, false).map((action) => action.id), ["save", "cancel"]);
 	});

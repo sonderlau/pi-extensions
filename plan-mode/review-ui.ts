@@ -6,6 +6,8 @@
  * 加粗，不改字号。意见按原文行号写成 `L150: ...` 交回模型。
  * 底部操作是可点击按钮；悬停时填色、加下划线，并把左空格换成 `>`。键盘快捷键仍可用。
  * `approve` / `doc only` / `reject` 要在 1.2 秒内操作两次才会通过。键盘和鼠标是同一种操作，可以混着来。
+ * 浏览：j/k 一行，u/d 半页，PageUp/PageDown 整页。半页和整页走同一套滑动，连按则跳。
+ * doc only 原来占着 d，改到 w（写文档、不实施）；按钮上会显示这个键。
  * 评论编辑里的 esc 只取消这一条，不走二次确认。
  *
  * 本目录（~/Dev/pi-agent/pi-plan-mode）是 vendored 的 plan-mode：基底 @bachi/pi-coder 2.5.6
@@ -30,6 +32,7 @@ import {
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
 import { activateImeWindow, beginImeReview } from "./ime-window.ts";
+import { createPageScroll } from "../ui-polish/smooth-page-scroll.ts";
 import { formatDocumentComment, formatLineComment, headingText, parsePlanLines, type PlanSourceLine } from "./review-lines.ts";
 
 export type PlanReviewResult =
@@ -251,7 +254,7 @@ export async function showPlanReview(ui: ReviewUI, plan: string): Promise<PlanRe
 				}
 				if (matchesKey(data, Key.escape)) return requestConfirm("reject");
 				if (matchesKey(data, "a")) return requestConfirm("approve");
-				if (matchesKey(data, "d")) return requestConfirm("doc");
+				if (matchesKey(data, "w")) return requestConfirm("doc");
 				if (confirmId) {
 					clearConfirm();
 					refresh();
@@ -260,6 +263,8 @@ export async function showPlanReview(ui: ReviewUI, plan: string): Promise<PlanRe
 				if (matchesKey(data, "c") || matchesKey(data, Key.enter)) return activate("comment");
 				if (matchesKey(data, Key.up) || matchesKey(data, "k")) return move(-1);
 				if (matchesKey(data, Key.down) || matchesKey(data, "j")) return move(1);
+				if (matchesKey(data, "u")) return scrollBy(-halfPage());
+				if (matchesKey(data, "d")) return scrollBy(halfPage());
 				if (matchesKey(data, Key.pageUp)) return scrollBy(-bodyHeight());
 				if (matchesKey(data, Key.pageDown)) return scrollBy(bodyHeight());
 				if (matchesKey(data, Key.home)) {
@@ -275,7 +280,14 @@ export async function showPlanReview(ui: ReviewUI, plan: string): Promise<PlanRe
 				}
 			}
 
+			function halfPage(): number {
+				return Math.max(1, Math.floor(bodyHeight() / 2));
+			}
+			const easeScroll = createPageScroll((delta) => applyScroll(delta));
 			function scrollBy(delta: number): void {
+				easeScroll(delta);
+			}
+			function applyScroll(delta: number): void {
 				const max = Math.max(0, rows.length - bodyHeight());
 				scroll = Math.max(0, Math.min(max, scroll + delta));
 				const visible = rows.slice(scroll, scroll + bodyHeight());
@@ -627,7 +639,7 @@ export function reviewActions(commenting: boolean, canSend: boolean, pending?: C
 		{ id: "comment", key: "c", label: "comment", enabled: true, tone: "text" },
 		{ id: "send", key: "s", label: "send", enabled: canSend, tone: "accent" },
 		action("approve", "a", "approve", "success"),
-		action("doc", "d", "doc only", "text"),
+		action("doc", "w", "doc only", "text"),
 		action("reject", "esc", "reject", "error"),
 	];
 }

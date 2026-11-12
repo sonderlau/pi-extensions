@@ -19,14 +19,14 @@ edit here, commit, `/reload`.
 
 向 Ghostty 报告 pi 运行状态：标签页标题（OSC 0 / OSC 9;3）显示当前活动（正在跑的工具 / waiting for you），标签栏下沿进度标记（OSC 9;4），以及面向未来终端的 OSC 7501 program-status。需要保持 `terminal.showTerminalProgress` 关闭，否则其 keepalive 会盖掉「等待用户」状态。
 
-### `ui-polish/` — 三件 UI 微调（聚合入口）
+### `ui-polish/` — 四件 UI 微调（聚合入口）
 
-`index.ts` 聚合加载目录内三个单文件扩展：
+`index.ts` 聚合加载目录内四个单文件扩展：
 
 - **mode-status-highlight**：状态栏里的权限模式段（plan / bypass / dangerous）加粗。模式名是安全信息不是装饰，灰色默认样式容易看漏。
 - **stable-footer-height**：底栏锁定 2 行。Starship 随 git/状态宽度在 1–2 行间回流，就是闪烁的来源；空 footer 保持隐藏。
+- **smooth-page-scroll**：PageUp/PageDown 单次翻页约 150ms 滑过去，视线能跟上重叠的那几行。连按或按住重复键则取消动画直接跳。方向键和滚轮仍是瞬间的。
 - **task-progress-nudge**：中途提醒模型推进任务清单（simple-task 的补充）。清单有 in_progress 项且模型 90 秒没碰清单时，在下一个工具结果后追加一行提示，防止弱模型把 `task_update` 攒到回合末一次性补齐。
-
 ### `plan-mode/` — 计划模式 + 审阅界面（vendored fork）
 
 `@bachi/pi-coder` plan-mode（base 2.5.6）的个人副本，叠加自研审阅界面：整份计划可滚动查看、`L123:` 行评论、双确认按钮（批准/打回/只写文档/修改后实施）。批准后计划原文存入项目 `.pi/plans/`。命令族：`/plan`、`/plan list|show|edit|implement|export`、`/plan-demo`（固定示例快速测审阅 UI）。上游 2.5.6 删除了审阅 UI 的接入缝，无法用独立扩展替换审批对话框，只能 vendor。详见 [plan-mode/README.md](plan-mode/README.md)。
