@@ -18,8 +18,9 @@ vendored copy instead.
   `sandbox-mode.ts`, which is a `globalThis` singleton and stays compatible
   with upstream's copy).
 - **Auto-updating**: pi itself and every other pi-coder extension — settings
-  excludes `!extensions/plan-mode/**` from the npm package and loads this
-  local package instead.
+  excludes `!extensions/plan-mode/**` from the npm package; this copy is
+  auto-discovered via the `~/.pi/agent/extensions/plan-mode` symlink into the
+  pi-extensions monorepo.
 
 ## Re-vendor procedure (when you want upstream's newer plan-mode)
 
@@ -59,11 +60,15 @@ vendored copy instead.
 
 演示中的批准、发送、只写文档和打回只结束演示；不会调用模型、写计划文件或改变当前权限模式。评论仅用于本次测试，关闭窗口后丢弃。
 
-## 独立维护
+## 维护
 
-这个目录是 pi-plan-mode 的自有 extension 副本，作为独立项目边界维护。运行时通过本地 package 加载它，避免 `@bachi/pi-coder` 更新时覆盖 plan-mode 的审阅界面定制。
+这个目录是 plan-mode 的自有 extension 副本，作为 pi-extensions monorepo
+（`~/Dev/pi-agent`）的一部分维护。运行时通过 `~/.pi/agent/extensions/plan-mode`
+symlink 自动发现加载，避免 `@bachi/pi-coder` 更新时覆盖审阅界面定制；改动直接
+在 monorepo 里提交。
 
-后续维护流程：先在这个目录完成改动并运行测试，再按需初始化独立 Git 仓库、绑定 GitHub 远端并同步。上游 re-vendor 时只复制需要的基础文件，然后重新应用本项目的审阅层改动；不要直接覆盖整个目录。
+上游 re-vendor 是**可选**的（不强制同步，fork 可独立演化）：只复制需要的基础
+文件，然后重新应用本项目的审阅层改动；不要直接覆盖整个目录。
 
 
 ```sh
@@ -71,7 +76,7 @@ PI_TEST_PI_ENTRY=~/.pi/agent/install/releases/$(cat ~/.pi/agent/install/current-
   node --test extensions/plan-mode/
 ```
 
-The `node_modules` symlink points at the active pi release
+The repo-root `node_modules` symlink points at the active pi release
 (`~/.pi/agent/install/releases/<version>/node_modules`) so `@earendil-works/*`
-and `typebox` resolve. Re-point it after a pi version bump if tests fail to
-resolve peers.
+and `typebox` resolve for all extension tests. Re-point it after a pi version
+bump if tests fail to resolve peers.
