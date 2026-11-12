@@ -54,6 +54,16 @@ cd ~/Dev/pi-agent
 PI_TEST_PI_ENTRY=~/.pi/agent/install/releases/$(cat ~/.pi/agent/install/current-version)/node_modules/@earendil-works/pi-coding-agent/dist/bundle/index.js \
   node --test .
 ```
+### 为什么没有 package.json
+
+本 repo 的依赖只有一个：pi 本体（`@earendil-works/pi-coding-agent` 及其 `pi-tui`），且是 peer 性质——代码里 import 的版本必须与**正在运行的 pi** 一致，自己 `npm install` 一份反而可能与运行时漂移。所以不做依赖安装，直接把根目录 `node_modules` symlink 到当前 pi release 的 node_modules：
+
+```sh
+ln -sfn ~/.pi/agent/install/releases/$(cat ~/.pi/agent/install/current-version)/node_modules ~/Dev/pi-agent/node_modules
+```
+
+克隆后首次跑测试、以及每次 pi 升级后，重跑上面同一条命令即可（`-sfn` 原子替换旧链接）。若未来某扩展真的需要第三方 npm 依赖，再单独为它引入依赖管理也不迟。
+
 
 ## 上游同步策略
 
