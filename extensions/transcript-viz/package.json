@@ -1,0 +1,14 @@
+{
+	"name": "pi-transcript-viz",
+	"version": "0.1.0",
+	"description": "OMP-style charts under numeric tables in Pi assistant replies",
+	"type": "module",
+	"license": "MIT",
+	"pi": {
+		"extensions": ["./index.ts"]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*",
+		"@earendil-works/pi-tui": "*"
+	}
+}

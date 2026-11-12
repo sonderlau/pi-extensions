@@ -1,0 +1,15 @@
+{
+	"name": "pi-plan-mode",
+	"version": "2.5.6-review.1",
+	"description": "Vendored @bachi/pi-coder plan-mode (2.5.6) with the personal plan-review overlay: scrollable plan, L-line comments, double-confirm buttons. Upstream's plan-mode is excluded via settings; everything else in pi-coder keeps auto-updating.",
+	"type": "module",
+	"license": "MIT",
+	"pi": {
+		"extensions": ["./extensions"]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*",
+		"@earendil-works/pi-tui": "*",
+		"typebox": "*"
+	}
+}
